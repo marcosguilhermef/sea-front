@@ -1,52 +1,10 @@
 import { Form, Container, Button } from "react-bootstrap";
 import { useState } from "react";
 import Alert from 'react-bootstrap/Alert';
-
-type User = {
-    user?: string,
-    password?: string,
-    level: number
-}
-
-type Sucesso = {
-    mensagem: string,
-}
-
-type Erro = {
-    error: string,
-    id?: number[],
-    user?: string[],
-    level?: string[],
-    password?:string[]
-}
-
-
-const save = async (data: User | undefined,sucesso: React.Dispatch<React.SetStateAction<undefined | Sucesso>>,erro: React.Dispatch<React.SetStateAction<Erro | undefined>>) => {
-    
-    var myHeaders = new Headers();
-
-    let token  = localStorage.getItem('token') || ""
-
-    let rq = await fetch("/user", {
-        body: JSON.stringify(data),
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            "Authorization": token
-        },
-
-    });
-
-    let json: any = await rq.json()
-
-    if (rq.ok) {
-        sucesso({ "mensagem": "Dados salvos com sucesso." })
-    } else {
-        erro(json)
-    }
-
-    return json;
-}
+import { User } from "../Types/User";
+import { Erro } from "../Types/Erro";
+import { Sucesso } from "../Types/Sucesso";
+import save from "../Utils/save";
 
 const EditUser = () => {
 
@@ -64,7 +22,7 @@ const EditUser = () => {
     async function send() {
         setSucesso(undefined)
         setErro(undefined)
-        await save(data, setSucesso, setErro)
+        await save(data,'POST', setSucesso, setErro)
     }
 
     return (

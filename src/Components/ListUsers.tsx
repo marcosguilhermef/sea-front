@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import './style.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPencil } from '@fortawesome/free-solid-svg-icons'
-
+import get from "../Utils/get"
+import deletar from "../Utils/delete"
 
 type User = {
     id: number,
@@ -13,56 +14,6 @@ type User = {
     level: number
 }
 
-
-const get = async (page?: number) => {
-    var myHeaders = new Headers();
-
-    let url = page ? `/user/${page}` : '/user'
-
-    const token  = localStorage.getItem('token') || ""
-
-    myHeaders.set('Content-Type','application/json')
-    myHeaders.set('Authorization',token)
-
-    let rq = await fetch(url, {
-        method: 'GET',
-        headers: myHeaders
-    });
-
-
-    let json : any = await rq.json()
-
-    return json;
-}
-
-const deletar = async (_id: number) => {
-    var myHeaders = new Headers();
-
-    const token  = localStorage.getItem('token') || ""
-
-    myHeaders.set('Content-Type','application/json')
-    myHeaders.set('Authorization',token)
-
-
-    let rq = await fetch("/user", { 
-        body: JSON.stringify({ id: _id }),
-        method: 'DELETE',
-        headers: myHeaders
-    });
-
-
-    let json : any = await rq.json()
-
-    if(rq.ok){
-        window.location.reload()
-    }
-
-    return json;
-}
-
-const redirect = (_url: string) => {
-    window.location.href =  _url
-}
 
 const ListUsers = () => {
     const [ users, setUsers ] = useState<User[] | []>( [])
@@ -126,9 +77,9 @@ const ListUsers = () => {
                 </tbody>
             </Table>
             <div className="page-controller">
-                <a href="#" onClick={async () => await getPage(page-1)} style={{ cursor: "pointer" }}>Voltar</a> 
-                <a href="#">{ page }</a>
-                <a href="#" onClick={async () => await getPage(page+1)} style={{ cursor: "pointer" }}>Avançar</a>
+                <a href="/#" onClick={async () => await getPage(page-1)} style={{ cursor: "pointer" }}>Voltar</a> 
+                <a href="/#">{ page }</a>
+                <a href="/#" onClick={async () => await getPage(page+1)} style={{ cursor: "pointer" }}>Avançar</a>
             </div>
         </>
     )

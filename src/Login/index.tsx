@@ -1,30 +1,14 @@
 import React, { useEffect, useState } from "react"
-import { Form, Button } from "react-bootstrap"
+import { Form } from "react-bootstrap"
 import './login.css'
-import { stringify } from "querystring"
+import handle from "../Utils/handle"
+import { User } from '../Types/User'
+import { Erro } from '../Types/Erro'
 
-
-type User = {
-    user: string,
-    password: string,
-    level?: number
-}
-
-type token  = string;
-
-type Erro = {
-    error: string,
-    id?: number[],
-    user?: string[],
-    level?: string[],
-    password?:string[]
-}
 
 const save = async (data: User | undefined,sucesso: React.Dispatch<React.SetStateAction<undefined | string>>,erro: React.Dispatch<React.SetStateAction<Erro | undefined>>) => {
     
-    var myHeaders = new Headers();
-
-    let rq = await fetch("http://127.0.0.1:3333/login", {
+    let rq = await fetch("/login", {
         body: JSON.stringify(data),
         method: 'POST',
         headers: {
@@ -45,19 +29,11 @@ const save = async (data: User | undefined,sucesso: React.Dispatch<React.SetStat
 }
 
 
-export default function Index() {
+const Login = () => {
 
     const [data, setData] = useState<User | undefined>()
     const [sucesso, setSucesso] = useState<string>();
     const [erro, setErro] = useState<Erro | undefined>();
-
-
-    function handle(e: React.ChangeEvent<HTMLInputElement>) {
-
-        const { name, value } = e.target
-        setData((e: any) => ({ ...e, [name]: value }))
-
-    }
 
     async function send() {
         setSucesso(undefined)
@@ -71,7 +47,7 @@ export default function Index() {
                 localStorage.setItem('token',sucesso)
                 window.location.href = "/"
             }
-    })
+    },[sucesso])
 
     useEffect(() => {
         let token = localStorage.getItem('token')
@@ -80,6 +56,9 @@ export default function Index() {
         }
     },[])
 
+    function change(e: React.ChangeEvent<HTMLInputElement>){
+        handle<User | undefined>(e, setData)
+    }
 
 
     return (
@@ -91,7 +70,7 @@ export default function Index() {
                         <form>
                             <Form.Group className="mb-3">
                                 <Form.Label>Login:</Form.Label>
-                                <Form.Control type="text" name="user" onChange={handle} isInvalid={!!erro?.user}/>
+                                <Form.Control type="text" name="user" onChange={change} isInvalid={!!erro?.user}/>
                                 <Form.Control.Feedback type="invalid">
                                     <ul>
                                         { erro?.user?.map(( e ) => ( <li>{ e }</li>)) }
@@ -100,7 +79,7 @@ export default function Index() {
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label>Password:</Form.Label>
-                                <Form.Control type="text" name="password" onChange={handle} isInvalid={!!erro?.password}/>
+                                <Form.Control type="password" name="password" onChange={change} isInvalid={!!erro?.password}/>
                                 <Form.Control.Feedback type="invalid">
                                     <ul>
                                         { erro?.password?.map(( e ) => (<li>{ e }</li>)) }
@@ -120,3 +99,5 @@ export default function Index() {
 
     )
 }
+
+export default Login;

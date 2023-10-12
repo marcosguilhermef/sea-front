@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children } : { children : any }) => {
     useEffect( () => {
         let token = localStorage.getItem('token')
         setToken(token)
-    })
+    },[token])
 
     if(token === null) {
         return <Navigate to="/login" state={{ from: location}} replace />
