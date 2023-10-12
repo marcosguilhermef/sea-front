@@ -8,7 +8,10 @@ import { Erro } from '../Types/Erro'
 
 const save = async (data: User | undefined,sucesso: React.Dispatch<React.SetStateAction<undefined | string>>,erro: React.Dispatch<React.SetStateAction<Erro | undefined>>) => {
     
-    let rq = await fetch("/login", {
+
+    let url = process.env.API_URL !== undefined ? process.env.API_URL : ''
+
+    let rq = await fetch(url+"/login", {
         body: JSON.stringify(data),
         method: 'POST',
         headers: {
