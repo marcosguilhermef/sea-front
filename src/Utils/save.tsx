@@ -1,7 +1,7 @@
 import { User } from "../Types/User";
 import { Erro } from "../Types/Erro";
 import { Sucesso } from "../Types/Sucesso";
-import getToken from "./getToken";
+import { newFetch } from "./newFetch";
 export default async function save(
     data: User | undefined,
     method: string,
@@ -9,17 +9,8 @@ export default async function save(
     erro: React.Dispatch<React.SetStateAction<Erro | undefined>>
     ) {
     
-    const token  = getToken()
+    let rq = await newFetch("/user",method, data)
 
-    let rq = await fetch("/user", {
-        body: JSON.stringify(data),
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            "Authorization": token
-        },
-
-    });
 
     let json: any = await rq.json()
 

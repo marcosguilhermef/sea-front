@@ -1,20 +1,8 @@
-import getToken from "./getToken";
+import { newFetch } from "./newFetch";
 const get = async (page?: number) => {
-    var myHeaders = new Headers();
 
     let url = page ? `/user/${page}` : '/user'
-
-    const token  = getToken()
-
-    myHeaders.set('Content-Type','application/json')
-    myHeaders.set('Authorization',token)
-
-    let rq = await fetch(url, {
-        method: 'GET',
-        headers: myHeaders
-    });
-
-
+    let rq = await newFetch(url,'GET')
     let json : any = await rq.json()
 
     return json;

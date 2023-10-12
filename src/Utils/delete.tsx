@@ -1,4 +1,5 @@
 import getToken from "./getToken";
+import { newFetch } from "./newFetch";
 const deletar = async (_id: number) => {
     var myHeaders = new Headers();
 
@@ -8,11 +9,7 @@ const deletar = async (_id: number) => {
     myHeaders.set('Authorization',token)
 
 
-    let rq = await fetch("/user", { 
-        body: JSON.stringify({ id: _id }),
-        method: 'DELETE',
-        headers: myHeaders
-    });
+    let rq = await newFetch("/user",'DELETE', { id: _id })
 
 
     let json : any = await rq.json()
