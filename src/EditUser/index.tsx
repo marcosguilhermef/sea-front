@@ -10,22 +10,29 @@ type User = {
 }
 
 type Sucesso = {
-    mensagem: string,
+    mensagem: string,    
 }
 
 type Erro = {
-    error: string
+    error: string,
+    id?: number[],
+    user?: string[],
+    level?: string[],
+    password?:string[]
 }
 
 const save = async (data: User | undefined,sucesso: React.Dispatch<React.SetStateAction<undefined | Sucesso>>,erro: React.Dispatch<React.SetStateAction<Erro | undefined>>) => {
     
     var myHeaders = new Headers();
 
-    let rq = await fetch("http://127.0.0.1:3333/user", {
+    let token  = localStorage.getItem('token') || ""
+
+    let rq = await fetch("/user", {
         body: JSON.stringify(data),
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': token
         },
 
     });
@@ -35,7 +42,7 @@ const save = async (data: User | undefined,sucesso: React.Dispatch<React.SetStat
     if (rq.ok) {
         sucesso({ "mensagem": "Dados salvos com sucesso." })
     } else {
-        erro({ "error": json?.error })
+        erro(json)
     }
 
     return json;
@@ -71,11 +78,22 @@ const EditUser = () => {
                 <Form>
                     <Form.Group className="mb-3">
                         <Form.Label>Login:</Form.Label>
-                        <Form.Control type="text" name="user" onChange={handle} />
+                        <Form.Control type="text" name="user" onChange={handle} isInvalid={!!erro?.user}/>
+                        <Form.Control.Feedback type="invalid">
+                            <ul>
+                                { erro?.user?.map(( e ) => ( e )) }
+                            </ul>
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Senha:</Form.Label>
-                        <Form.Control type="password" name="password" onChange={handle} />
+                        <Form.Control type="password" name="password" onChange={handle} isInvalid={!!erro?.password}/>
+                        <Form.Control.Feedback type="invalid">
+                            <ul>
+                                { erro?.password?.map(( e ) => ( e )) }
+                            </ul>
+                        </Form.Control.Feedback>
+
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Button className="w-100" onClick={async () => await send()}>Salvar</Button>

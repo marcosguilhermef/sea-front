@@ -1,6 +1,9 @@
 import { Table, Button } from "react-bootstrap"
 import { useEffect, useState } from "react"
 import './style.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faPencil } from '@fortawesome/free-solid-svg-icons'
+
 
 type User = {
     id: number,
@@ -14,15 +17,20 @@ type User = {
 const get = async (page?: number) => {
     var myHeaders = new Headers();
 
-    let url = page ? `http://127.0.0.1:3333/user/${page}` : 'http://127.0.0.1:3333/user'
+    let url = page ? `/user/${page}` : '/user'
 
+    const token  = localStorage.getItem('token') || ""
 
-    let rq = await fetch(url);
+    myHeaders.set('Content-Type','application/json')
+    myHeaders.set('Authorization',token)
+
+    let rq = await fetch(url, {
+        method: 'GET',
+        headers: myHeaders
+    });
 
 
     let json : any = await rq.json()
-
-    console.log(json.data)
 
     return json;
 }
@@ -30,14 +38,16 @@ const get = async (page?: number) => {
 const deletar = async (_id: number) => {
     var myHeaders = new Headers();
 
+    const token  = localStorage.getItem('token') || ""
 
-    let rq = await fetch("http://127.0.0.1:3333/user", { 
+    myHeaders.set('Content-Type','application/json')
+    myHeaders.set('Authorization',token)
+
+
+    let rq = await fetch("/user", { 
         body: JSON.stringify({ id: _id }),
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-    
+        headers: myHeaders
     });
 
 
@@ -106,8 +116,8 @@ const ListUsers = () => {
                                     <td> { e?.createdAt} </td>
                                     <td> { e?.updatedAt} </td>
                                     <td>
-                                        <a onClick={async () => await deletar(e?.id)} className="mx-1" style={{ cursor: "pointer" }}>[EXCLUIR]</a>
-                                        <a href={`/users/${e?.id}`} className="mx-1">[EDITAR]</a>
+                                        <FontAwesomeIcon onClick={async () => await deletar(e?.id)} icon={faTrash}  className="mx-1" style={{ cursor: "pointer", color: "red", fontSize: "1.2rem" }}/>
+                                        <FontAwesomeIcon  onClick={ () => window.location.href =`/users/${e?.id}` } icon={faPencil}  className="mx-1" style={{ cursor: "pointer", color: "greem", fontSize: "1.2rem" }}/>
                                     </td>
                                 </tr>
                             )

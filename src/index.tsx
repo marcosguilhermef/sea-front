@@ -3,18 +3,22 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from './Home';
 import Layout from './Layout';
 import ListUsers from './Users';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import EditUser from './EditUser';
 import AddUser from './AddUser'
 import Login from './Login'
+import ProtectedRoute from './PortectedRoute';
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
           <Route index element={<ListUsers />} />
           <Route path="/users" element={<ListUsers />} />
           <Route path="/users/:id" element={<EditUser />} />
